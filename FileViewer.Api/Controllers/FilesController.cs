@@ -16,7 +16,6 @@ namespace FileViewer.Api.Controllers
         {
         }
 
-        [Route("")]
         [HttpGet]
         public PathInfo GetDefaultPathInfo()
         {
@@ -29,20 +28,25 @@ namespace FileViewer.Api.Controllers
 
             return pathInfo;
         }
-        [Route("{path}")]
         [HttpGet]
-        public PathInfo GetPathInfo(string path)
+        public PathInfo GetPathInfo(string newPath, string basePath, int smallFiles, int middleFiles, int bigFiles)
         {
             Viewer viewer = new Viewer();
             PathInfo pathInfo;
 
-            viewer.RootPath = path;
+            viewer.RootPath = newPath;
             viewer.BrowsePath();
             pathInfo = viewer.PathInfo;
 
             return pathInfo;
         }
 
+        public PathInfo UpdatePathInfo(string basePath)
+        {
+            PathInfo pathInfo = new PathInfo();
+
+            return pathInfo;
+        }
         // POST api/values 
         public void Post([FromBody]string value)
         {

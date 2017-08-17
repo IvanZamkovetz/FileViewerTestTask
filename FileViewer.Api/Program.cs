@@ -14,7 +14,7 @@ namespace FileViewer.Api
             var baseAddress = string.Format("http://localhost:9000/");//"http://*:9000/" for all connections
             using (WebApp.Start<Startup>(baseAddress))
             {
-                Console.WriteLine("Server started");
+                Console.WriteLine("Server started at " + baseAddress);
                 Console.ReadLine();
             }
         }

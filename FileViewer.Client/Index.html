@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html ng-app="fileViewer" >
+<head>
+    <title>File viewer</title>
+    <meta charset="utf-8" />
+
+</head>
+<body>
+    <div ng-controller="filesController" >
+         <h1>{{pathInfo}}</h1>
+   
+    <table>
+        <tr>
+            <th>
+                Less 10Mb
+            </th>
+            <th>
+                10-50Mb
+            </th>
+            <th>
+                More 100Mb
+            </th>
+        </tr>
+        <tr>
+            <th>
+                {{small}}
+            </th>
+            <th>
+                {{middle}}
+            </th>
+            <th>
+                {{big}}
+            </th>
+        </tr>
+    </table>
+    
+        <ul>
+            <li ng-repeat="path in paths">
+                <a ng-href="#" ng-click="getPathInfo(path)">{{path}}</a>
+            </li>
+        </ul>
+     </div>
+
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/angular-resource.min.js"></script>
+
+    <script src="app.js"></script>
+    <script src="services/filesService.js"></script>
+    <script src="controllers/filesController.js"></script>
+
+</body>
+</html>
