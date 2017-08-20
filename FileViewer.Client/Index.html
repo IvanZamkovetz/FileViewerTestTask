@@ -1,45 +1,45 @@
 ﻿<!DOCTYPE html>
-<html ng-app="fileViewer" >
+<html ng-app="fileViewer">
 <head>
     <title>File viewer</title>
     <meta charset="utf-8" />
 
 </head>
 <body>
-    <div ng-controller="filesController" >
-         <h1>{{pathInfo}}</h1>
-   
-    <table>
-        <tr>
-            <th>
-                Less 10Mb
-            </th>
-            <th>
-                10-50Mb
-            </th>
-            <th>
-                More 100Mb
-            </th>
-        </tr>
-        <tr>
-            <th>
-                {{small}}
-            </th>
-            <th>
-                {{middle}}
-            </th>
-            <th>
-                {{big}}
-            </th>
-        </tr>
-    </table>
-    
+    <div ng-controller="filesController">
+
+        <table>
+            <tr>
+                <th>
+                    Less 10Mb
+                </th>
+                <th>
+                    10-50Mb
+                </th>
+                <th>
+                    More 100Mb
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    {{pathInfo.SmallFiles}}
+                </th>
+                <th>
+                    {{pathInfo.MiddleFiles}}
+                </th>
+                <th>
+                    {{pathInfo.BigFiles}}
+                </th>
+            </tr>
+        </table>
+
+        <h5>current path: {{pathInfo.RootPath}}</h5>
         <ul>
-            <li ng-repeat="path in paths">
-                <a ng-href="#" ng-click="getPathInfo(path)">{{path}}</a>
+            <li ng-repeat="subNode in pathInfo.SubNodes">
+                <a ng-href="#" ng-click="transite(subNode)">{{subNode}}</a>
             </li>
         </ul>
-     </div>
+    </div>
 
     <script src="Scripts/angular.min.js"></script>
     <script src="Scripts/angular-resource.min.js"></script>

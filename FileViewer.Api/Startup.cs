@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Owin;
 using System.Web.Http;
 using System.Net.Http.Formatting;
+using System.Web.Http.Cors;
 
 namespace FileViewer.Api
 {
@@ -18,6 +19,9 @@ namespace FileViewer.Api
         {
             // Configure Web API for self-host. 
             HttpConfiguration config = new HttpConfiguration();
+            var cors = new EnableCorsAttribute("*", "*", "*");
+
+            config.EnableCors(cors);
 
             // Attribute routing.
             config.MapHttpAttributeRoutes();

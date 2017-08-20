@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileViewer.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,111 +10,180 @@ namespace FileViewer.Functional
 {
     public class Viewer
     {
-        private PathInfo _pathInfo;
+        public PathInfo PathInfo;
 
-        public PathInfo PathInfo { get { return _pathInfo.ShallowCopy(); } }
-        public string RootPath
+        public Viewer()
         {
-            get { return _pathInfo.RootPath; }
-            set
+        }
+        public Viewer(PathInfo pathInfo)
+        {
+            PathInfo = pathInfo;
+        }
+
+        public bool Observe()
+        {
+            PathInfo.SubNodes.Clear();
+            try
             {
-                if (value != "" && _pathInfo.SubNodes.Contains(value) && Directory.Exists(value))
+                if (String.Equals(PathInfo.RootPath, "\\"))
                 {
-                    string differencePath = "";
-                    int increment = 0;
+                    PathInfo.SmallFiles = -1;
+                    PathInfo.MiddleFiles = -1;
+                    PathInfo.BigFiles = -1;
 
-                    if (value == "..")
-                    {
-                        _pathInfo.RootPath = Directory.GetParent(_pathInfo.RootPath).FullName;
-                        differencePath = _pathInfo.RootPath;
-                        increment = 1;
-                    }
-                    else
-                    {
-                        differencePath = _pathInfo.RootPath;
-                        increment = -1;
-                        _pathInfo.RootPath = value;
-                    }
+                    PathInfo.SubNodes.AddRange(Directory.GetLogicalDrives());
 
-                    DirectoryInfo differencePathInfo = new DirectoryInfo(differencePath);
+                    return true;
+                }
+                if (Directory.Exists(PathInfo.RootPath))
+                {
+                    PathInfo.SubNodes.Add("..");
+
+                    PathInfo.SubNodes.AddRange(Directory.GetDirectories(PathInfo.RootPath));
+                    PathInfo.SubNodes.AddRange(Directory.GetFiles(PathInfo.RootPath));
+
+                    return true;
+                }
+
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return false;
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                return false;
+            }
+            catch (IOException ex)
+            {
+                return false;
+            }
+            return false;
+        }
+        public string TryTransite(string newPath, string path)
+        {
+            try
+            {
+                if (Directory.GetDirectories(path).Contains(newPath))
+                {
+                    return newPath;
+                }
+                if (String.Equals(path, "\\") && Directory.GetLogicalDrives().Contains(newPath))
+                {
+                    return newPath;
+                }
+                if (String.Equals(newPath, ".."))
+                {
+                    DirectoryInfo parentPathInfo = Directory.GetParent(path);
+                    return parentPathInfo == null ? "\\" : parentPathInfo.FullName;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return null;
+        }
+
+        public bool WidthBrowsePath()
+        {
+            if (String.Equals(PathInfo.RootPath, "\\") || !Directory.Exists(PathInfo.RootPath))
+            {
+                return false;
+            }
+
+            List<List<string>> pathsLevel = new List<List<string>>();
+            pathsLevel.Add(new List<string>());
+            pathsLevel.Add(new List<string>());
+
+            int currentLevelIndex = 0;
+            int nextLevelIndex = 1;
+
+            int smallFiles = 0;
+            int middleFiles = 0;
+            int bigFiles = 0;
+
+            pathsLevel[currentLevelIndex].Add(PathInfo.RootPath);
+            do
+            {
+                pathsLevel[nextLevelIndex].Clear();
+                foreach (string currentLevelPath in pathsLevel[currentLevelIndex])
+                {
+                    DirectoryInfo currentLevelPathInfo = new DirectoryInfo(currentLevelPath);
                     FileInfo[] filesInfo = null;
                     try
                     {
-                        filesInfo = differencePathInfo.GetFiles("*.*");
+                        filesInfo = currentLevelPathInfo.GetFiles("*.*");
                     }
                     catch (UnauthorizedAccessException e)
                     {
-
+                        continue;
                     }
                     catch (DirectoryNotFoundException e)
                     {
-
+                        continue;
                     }
                     foreach (FileInfo fileInfo in filesInfo)
                     {
                         if (fileInfo.Length <= 10000)
                         {
-                            _pathInfo.SmallFiles += increment;
+                            smallFiles++;
                         }
                         if (fileInfo.Length > 10000 && fileInfo.Length <= 50000)
                         {
-                            _pathInfo.MiddleFiles += increment;
+                            middleFiles++;
                         }
                         if (fileInfo.Length >= 100000)
                         {
-                            _pathInfo.BigFiles += increment;
+                            bigFiles++;
                         }
                     }
 
-                    _pathInfo.SubNodes.Clear();
-                    _pathInfo.SubNodes.Add("..");
+                    string[] childPaths;
                     try
                     {
-                        _pathInfo.SubNodes.AddRange(Directory.GetDirectories(_pathInfo.RootPath));
-                        _pathInfo.SubNodes.AddRange(Directory.GetFiles(_pathInfo.RootPath));
+                        childPaths = Directory.GetDirectories(currentLevelPath);
                     }
                     catch (UnauthorizedAccessException e)
                     {
-
+                        continue;
                     }
                     catch (DirectoryNotFoundException e)
                     {
-
+                        continue;
                     }
+                    if (childPaths.Length == 0)
+                    {
+                        continue;
+                    }
+                    pathsLevel[nextLevelIndex].AddRange(childPaths);
                 }
+                currentLevelIndex = nextLevelIndex == 1 ? 1 : 0;
+                nextLevelIndex = currentLevelIndex == 1 ? 0 : 1;
 
-            }
+            } while (pathsLevel[nextLevelIndex].Count != 0);
+
+            PathInfo.SmallFiles = smallFiles;
+            PathInfo.MiddleFiles = middleFiles;
+            PathInfo.BigFiles = bigFiles;
+
+            return true;
         }
-
-        public Viewer()
+        public bool DepthBrowsePath()
         {
-            _pathInfo = new PathInfo();
-            _pathInfo.RootPath = Directory.GetCurrentDirectory();
-            _pathInfo.SubNodes.Add("..");
-            try
+            if (String.Equals(PathInfo.RootPath, "\\") || !Directory.Exists(PathInfo.RootPath))
             {
-                _pathInfo.SubNodes.AddRange(Directory.GetDirectories(_pathInfo.RootPath));
-                _pathInfo.SubNodes.AddRange(Directory.GetFiles(_pathInfo.RootPath));
+                return false;
             }
-            catch (UnauthorizedAccessException e)
-            {
 
-            }
-            catch (DirectoryNotFoundException e)
-            {
-
-            }
-        }
-
-        public void BrowsePath()
-        {
             int smallFiles = 0;
             int middleFiles = 0;
             int bigFiles = 0;
 
-            //use Stack<Branch {string path, int childIndex}> paths for reducing next subNode search
+            //use Stack<Branch {string pathInfo, int childIndex}> paths for reducing next subNode search
             Stack<string> paths = new Stack<string>();
-            paths.Push(_pathInfo.RootPath);
+            paths.Push(PathInfo.RootPath);
 
             bool pushed = true;
             string popBuffer = "";
@@ -223,9 +293,28 @@ namespace FileViewer.Functional
                 }
             }
 
-            _pathInfo.SmallFiles = smallFiles;
-            _pathInfo.MiddleFiles = middleFiles;
-            _pathInfo.BigFiles = bigFiles;
+            PathInfo.SmallFiles = smallFiles;
+            PathInfo.MiddleFiles = middleFiles;
+            PathInfo.BigFiles = bigFiles;
+
+            return true;
+        }
+
+        public static void CleanDataBase()
+        {
+            FileViewerContext context = new FileViewerContext();
+            List<PathInfo> pathInfos = context.PathInfos.ToList();
+            foreach (PathInfo pathInfo in pathInfos)
+            {
+                if (!Directory.Exists(pathInfo.RootPath))
+                {
+                    context.Entry(pathInfo).State = System.Data.Entity.EntityState.Deleted;
+                }
+            }
+
+            context.SaveChanges();
+
+            return;
         }
     }
 }
