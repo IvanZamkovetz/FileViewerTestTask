@@ -1,8 +1,8 @@
 # FileViewerTestTask
 Application is intended for browsing local file system of the given machine thru the internet using web.
 1. Functional
--Observing list of files and directories of the given path.
--Browsing paths
+1.1 Observing list of files and directories of the given path.
+1.2 Browsing paths
 1.3 Analyse path's included files
 2. Features
 2.1 Width and depth mode of files enumeration
