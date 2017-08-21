@@ -6,18 +6,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileViewer.Functional
+namespace FileViewer.Api.Services
 {
     public class Viewer
     {
         public PathInfo PathInfo;
 
+        public int Small;
+        public int Middle;
+        public int Big;
+
         public Viewer()
         {
+            Small = 10000000;
+            Middle = 50000000;
+            Big = 100000000;
         }
         public Viewer(PathInfo pathInfo)
         {
             PathInfo = pathInfo;
+
+            Small = 10000000;
+            Middle = 50000000;
+            Big = 100000000;
         }
 
         public bool Observe()
@@ -126,15 +137,15 @@ namespace FileViewer.Functional
                     }
                     foreach (FileInfo fileInfo in filesInfo)
                     {
-                        if (fileInfo.Length <= 10000)
+                        if (fileInfo.Length <= Small)
                         {
                             smallFiles++;
                         }
-                        if (fileInfo.Length > 10000 && fileInfo.Length <= 50000)
+                        if (fileInfo.Length > Small && fileInfo.Length <= Middle)
                         {
                             middleFiles++;
                         }
-                        if (fileInfo.Length >= 100000)
+                        if (fileInfo.Length >= Big)
                         {
                             bigFiles++;
                         }
@@ -212,15 +223,15 @@ namespace FileViewer.Functional
                     }
                     foreach (FileInfo fileInfo in filesInfo)
                     {
-                        if (fileInfo.Length <= 10000)
+                        if (fileInfo.Length <= Small)
                         {
                             smallFiles++;
                         }
-                        if (fileInfo.Length > 10000 && fileInfo.Length <= 50000)
+                        if (fileInfo.Length > Small && fileInfo.Length <= Middle)
                         {
                             middleFiles++;
                         }
-                        if (fileInfo.Length >= 100000)
+                        if (fileInfo.Length >= Big)
                         {
                             bigFiles++;
                         }

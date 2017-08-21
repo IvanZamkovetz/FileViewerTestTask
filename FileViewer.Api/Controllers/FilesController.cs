@@ -1,5 +1,5 @@
 ﻿using FileViewer.Api.Models;
-using FileViewer.Functional;
+using FileViewer.Api.Services;
 using FileViewer.Model;
 using System;
 using System.Collections.Generic;
@@ -101,11 +101,6 @@ namespace FileViewer.Api.Controllers
             Context.SaveChanges();
 
             return pathInfo;
-        }
-
-        // PUT api/values/5 
-        public void Put(int id, [FromBody]string value)
-        {
         }
 
         // DELETE api/values/5 

@@ -7,7 +7,12 @@
 </head>
 <body>
     <div ng-controller="filesController">
-
+        <h1>Welcome to file viewer!</h1>
+        <h5>The API servise is hosted on: {{apiHost}}</h5>
+        <div class="form-group">
+            <label for="apiHost">Set API Host:</label>
+            <input name="apiHost" ng-model="apiHost"/>
+        </div>
         <table>
             <tr>
                 <th>
@@ -32,6 +37,7 @@
                 </th>
             </tr>
         </table>
+        <button ng-click="count(pathInfo.RootPath)">Recount files</button>
 
         <h5>current path: {{pathInfo.RootPath}}</h5>
         <ul>

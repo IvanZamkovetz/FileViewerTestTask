@@ -2,6 +2,7 @@
 
 app.controller('filesController', ['$scope', 'filesService', function ($scope, filesService) {
     //alert("controller");
+    $scope.apiHost = 'localhost:9000';
 
     $scope.pathInfo = {
         RootPath: "rootPath",
@@ -11,7 +12,7 @@ app.controller('filesController', ['$scope', 'filesService', function ($scope, f
         BigFiles: 3
     };
 
-    filesService.get({}, function (data) {
+    filesService.get({ host: $scope.apiHost, asd: "qwe" }, function (data) {
         $scope.pathInfo = data;
         if ($scope.pathInfo.SmallFiles === -1){
             $scope.count($scope.pathInfo.RootPath);
@@ -28,7 +29,7 @@ app.controller('filesController', ['$scope', 'filesService', function ($scope, f
             path: $scope.pathInfo.RootPath
         };
 
-        filesService.transite({}, rootPath, function (data) {
+        filesService.transite({ host: $scope.apiHost }, rootPath, function (data) {
             if (data.RootPath == null) {
                 return;
             }
@@ -54,7 +55,7 @@ app.controller('filesController', ['$scope', 'filesService', function ($scope, f
             path: path
         };
 
-        filesService.count({}, rootPath, function (data) {
+        filesService.count({ host: $scope.apiHost }, rootPath, function (data) {
             $scope.pathInfo.SmallFiles = data.SmallFiles;
             $scope.pathInfo.MiddleFiles = data.MiddleFiles;
             $scope.pathInfo.BigFiles = data.BigFiles;

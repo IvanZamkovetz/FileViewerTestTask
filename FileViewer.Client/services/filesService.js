@@ -1,24 +1,34 @@
 ﻿app.factory('filesService', ['$resource',
       function ($resource) {
-          return $resource('http://localhost:9000/api/files/:action', {}, {
-              transite: {
-                  method: 'POST',
-                  params: { action: 'transite' },
-                  headers: {
-                      'Content-Type': 'application/json',
-                      "Access-Control-Allow-Origin": "*"
-                  },
-                  hasBody: true
+          return $resource('http://:host/:service/:action',
+              {
+                  host: 'localhost:9000',
+                  service: 'api/files',
+                  action: ''
               },
-              count: {
-                  method: 'POST',
-                  params: { action: 'count' },
-                  headers: {
-                      'Content-Type': 'application/json',
-                      "Access-Control-Allow-Origin": "*"
+              {//
+                  get: {
+                      method: 'GET',
+                      params: { dfg: 'wer' }
                   },
-                  hasBody: true
-              }
-          })
+                  transite: {
+                      method: 'POST',
+                      params: { action: 'transite' },
+                      headers: {
+                          'Content-Type': 'application/json',
+                          "Access-Control-Allow-Origin": "*"
+                      },
+                      hasBody: true
+                  },
+                  count: {
+                      method: 'POST',
+                      params: { action: 'count' },
+                      headers: {
+                          'Content-Type': 'application/json',
+                          "Access-Control-Allow-Origin": "*"
+                      },
+                      hasBody: true
+                  }
+              })
       }
 ]);
